@@ -17,6 +17,12 @@
     const d=gcd(p1,q1);p1/=d;q1/=d;
     return sign+(p1===1?'':p1)+'π'+(q1===1?'':'/'+q1);
   }
+  function radiansLabel(degrees){
+    // Mostra frazioni semplici soltanto quando corrispondono all'angolo effettivo.
+    const coefficient=degrees/180;
+    for(let denominator=1;denominator<=24;denominator++)if(Math.abs(coefficient*denominator-Math.round(coefficient*denominator))<1e-9)return piFraction(degrees)+' rad';
+    return '≈ '+fmt(degrees*Math.PI/180,5)+' rad';
+  }
   function parseDMS(text){const parts=text.trim().replace(/−/g,'-').replace(/[°′'″"]/g,' ').replace(/,/g,'.').split(/\s+/).filter(Boolean);if(parts.length<1||parts.length>3)throw new Error('Usa gradi, minuti e secondi: per esempio 15 30 0.');const d=parseDecimal(parts[0]),m=parts.length>1?parseDecimal(parts[1]):0,s=parts.length>2?parseDecimal(parts[2]):0;if(m<0||m>=60||s<0||s>=60)throw new Error('Minuti e secondi devono essere tra 0 e 59,999…');return finite((parts[0].startsWith('-')?-1:1)*(Math.abs(d)+m/60+s/3600));}
   function formatDMS(degrees){let total=Math.round(Math.abs(degrees)*3600*10000)/10000;const d=Math.floor(total/3600);total-=d*3600;const m=Math.floor(total/60),s=total-m*60;return (degrees<0?'−':'')+d+'° '+String(m).padStart(2,'0')+'′ '+fmt(s,4)+'″';}
   function parseRadians(text){
@@ -37,5 +43,5 @@
   const unwrap=(total,previous,current)=>total+normalize(current-previous+180)-180;
   function graphRange(angle){return angle>=0?[0,Math.max(360,Math.ceil(Math.max(angle,1)/360)*360)]:[Math.min(-360,Math.floor(angle/360)*360),0];}
   function convert(mode,text){const degrees=mode==='degrees'?parseDecimal(text):mode==='dms'?parseDMS(text):mode==='radians'?parseRadians(text)*180/Math.PI:(()=>{throw new Error('Formato sconosciuto.');})();finite(degrees);return {degrees,radians:finite(degrees*Math.PI/180),dms:formatDMS(degrees),pi:piFraction(degrees)};}
-  return {MAX_ANGLE,normalize,fmt,piFraction,parseDecimal,parseDMS,parseRadians,formatDMS,values,status,quadrant,unwrap,graphRange,convert};
+  return {MAX_ANGLE,normalize,fmt,piFraction,radiansLabel,parseDecimal,parseDMS,parseRadians,formatDMS,values,status,quadrant,unwrap,graphRange,convert};
 });

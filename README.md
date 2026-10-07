@@ -6,6 +6,24 @@ Una versione web separata dell’applicazione desktop Python. Nessun file deskto
 
 ## Per iniziare
 
+### Aggiornamento 1.0.6 — PC e iPhone
+
+Sul PC la circonferenza occupa meno larghezza e i quattro grafici hanno più spazio. Sul telefono circonferenza a sinistra e una curva a destra restano visibili insieme; scegli la funzione con i quattro pulsanti colorati. Play e Reset sono subito sotto. Ruota il telefono in orizzontale per ingrandire la vista; in verticale le etichette del cerchio sono necessariamente più piccole.
+
+Il riepilogo vicino all’angolo usa frazioni semplici come π/2, 7π/2 o 13π/9 quando corrispondono all’angolo; per gli altri valori usa radianti decimali con ≈. Il convertitore conserva la sua forma con π anche per gli angoli generici.
+
+Per aggiornare il sito già pubblicato:
+
+1. Apri `https://github.com/vivaldomazzoli-ux/trigonometria-pwa`.
+2. Scegli **Add file → Upload files**.
+3. Trascina tutto il contenuto della cartella aggiornata `Trigonometria_PWA`, comprese le cartelle `css`, `js` e `icons`. Non trascinare il contenitore `Trigonometria_PWA` né lo ZIP. Il file `index.html` deve restare nella radice.
+4. Premi **Commit changes**. La pubblicazione GitHub Pages parte automaticamente; non occorre cambiare nuovamente Settings → Pages.
+5. Dopo la pubblicazione, riapri il sito online e premi **Aggiorna l’app** se compare, anche sull’iPhone. L’indirizzo del sito resta `https://vivaldomazzoli-ux.github.io/trigonometria-pwa/`.
+
+La versione del service worker è già incrementata a 1.0.6: non devi editarla per questo aggiornamento.
+
+### Prima apertura
+
 1. Estrai lo ZIP.
 2. Apri la cartella `Trigonometria_PWA`.
 3. Puoi aprire `index.html` con un doppio clic per una prima prova della circonferenza e del convertitore.
@@ -70,7 +88,7 @@ I percorsi sono relativi: la PWA funziona anche nella sottocartella del reposito
 ## Aggiornare la versione online
 
 1. Modifica i file nella tua copia della PWA.
-2. Cambia `VERSION` all’inizio di `service-worker.js`, per esempio da `1.0.2` a `1.0.3`.
+2. Per modifiche successive a questo pacchetto cambia `VERSION` all’inizio di `service-worker.js`, per esempio da `1.0.6` a `1.0.7`.
 3. Carica e salva su GitHub tutti i file modificati, incluso `service-worker.js`.
 4. Dopo la pubblicazione, riapri l’app online. Quando appare **“Aggiorna l’app”**, premilo: il nuovo service worker sostituisce la versione precedente e ricarica la pagina.
 

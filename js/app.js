@@ -62,10 +62,12 @@
     if(document.activeElement!==$('angle-input'))$('angle-input').value=M.fmt(state.angle,4);
     const n=M.normalize(state.angle);$('angle-slider').value=n;$('slider-output').value=M.fmt(n,2)+'°';
   }
-  function pause(){state.playing=false;$('play').textContent='▶ Play';$('play').setAttribute('aria-pressed','false');lastFrame=0;}
-  function play(){state.playing=true;$('play').textContent='⏸ Pausa';$('play').setAttribute('aria-pressed','true');lastFrame=performance.now();}
+  function playLabels(){for(const id of ['play','compact-play']){$(id).textContent=state.playing?'⏸ Pausa':'▶ Play';$(id).setAttribute('aria-pressed',String(state.playing));}}
+  function pause(){state.playing=false;playLabels();lastFrame=0;}
+  function play(){state.playing=true;playLabels();lastFrame=performance.now();}
   function renderValues(){const n=M.normalize(state.angle),v=M.values(state.angle);
-    $('angle-display').textContent=M.fmt(state.angle,2)+'°';$('pi-display').textContent=M.piFraction(state.angle)+' rad';
+    $('angle-display').textContent=M.fmt(state.angle,2)+'°';$('pi-display').textContent=M.radiansLabel(state.angle);
+    $('pi-display').title='Angolo completo: '+M.fmt(state.angle,4)+'° = '+M.fmt(state.angle*Math.PI/180,8)+' rad (valore decimale arrotondato)';
     $('equivalent').textContent=M.fmt(n,2)+'°';$('turns').textContent=`${Math.floor(state.angle/360)} × 360° + ${M.fmt(n,2)}°`;
     $('radians').textContent=M.fmt(state.angle*Math.PI/180,6)+' rad';$('quadrant').textContent=M.quadrant(state.angle);
     for(const kind of kinds){const info=M.status(kind,state.angle);$('value-'+kind).textContent=v[kind]===null?'Non definita':M.fmt(v[kind],6);const status=$('status-'+kind);status.textContent=state.visible[kind]?(info.undefined?'NON DEFINITA · '+info.limits:info.text+(info.limits?' · '+info.limits:'')):'Funzione nascosta';}
@@ -106,7 +108,7 @@
   function frame(timestamp){if(state.playing){const elapsed=Math.min((timestamp-lastFrame)/1000,.25);lastFrame=timestamp;setAngle(state.angle+state.speed*Math.max(0,elapsed));if(state.angle===M.MAX_ANGLE)pause();}if(dirty)render();requestAnimationFrame(frame);}
   function coordinates(event){const p=svg.createSVGPoint();p.x=event.clientX;p.y=event.clientY;const matrix=svg.getScreenCTM();return matrix?p.matrixTransform(matrix.inverse()):null;}
   const mouseAngle=p=>M.normalize(Math.atan2(-p.y,p.x)*180/Math.PI);
-  svg.addEventListener('pointerdown',event=>{if(!event.isPrimary||(event.pointerType==='mouse'&&event.button!==0))return;const p=coordinates(event);if(!p)return;const v=M.values(state.angle),pointNear=Math.hypot(p.x-v.cos*R,p.y+v.sin*R)<18,ringNear=Math.abs(Math.hypot(p.x,p.y)-R)<16;if(!pointNear&&!ringNear)return;pause();event.preventDefault();const a=mouseAngle(p);setAngle(M.unwrap(state.angle,M.normalize(state.angle),a));drag={id:event.pointerId,previous:a};svg.setPointerCapture(event.pointerId);svg.classList.add('dragging');});
+  svg.addEventListener('pointerdown',event=>{if(!event.isPrimary||(event.pointerType==='mouse'&&event.button!==0))return;const p=coordinates(event);if(!p)return;const v=M.values(state.angle),hit=Math.max(18,12*360/svg.getBoundingClientRect().width),pointNear=Math.hypot(p.x-v.cos*R,p.y+v.sin*R)<hit,ringNear=Math.abs(Math.hypot(p.x,p.y)-R)<hit;if(!pointNear&&!ringNear)return;pause();event.preventDefault();const a=mouseAngle(p);setAngle(M.unwrap(state.angle,M.normalize(state.angle),a));drag={id:event.pointerId,previous:a};svg.setPointerCapture(event.pointerId);svg.classList.add('dragging');});
   svg.addEventListener('pointermove',event=>{if(!drag||event.pointerId!==drag.id)return;const p=coordinates(event);if(!p||Math.hypot(p.x,p.y)<15)return;event.preventDefault();const a=mouseAngle(p);setAngle(M.unwrap(state.angle,drag.previous,a));drag.previous=a;});
   const endDrag=()=>{drag=null;svg.classList.remove('dragging');};svg.addEventListener('pointerup',endDrag);svg.addEventListener('pointercancel',endDrag);svg.addEventListener('lostpointercapture',endDrag);
   svg.addEventListener('keydown',event=>{if(['ArrowLeft','ArrowDown','ArrowRight','ArrowUp'].includes(event.key)){event.preventDefault();pause();setAngle(state.angle+(['ArrowRight','ArrowUp'].includes(event.key)?1:-1)*(event.shiftKey?15:1));}});
@@ -114,6 +116,8 @@
   $('angle-slider').addEventListener('pointerdown',()=>{pause();sliderBase=Math.floor(state.angle/360)*360;});$('angle-slider').addEventListener('keydown',()=>{pause();sliderBase=Math.floor(state.angle/360)*360;});$('angle-slider').addEventListener('input',()=>setAngle(sliderBase+Number($('angle-slider').value)));
   $('minus-turn').addEventListener('click',()=>setAngle(state.angle-360));$('plus-turn').addEventListener('click',()=>setAngle(state.angle+360));
   $('play').addEventListener('click',()=>state.playing?pause():play());$('reset').addEventListener('click',()=>{pause();setAngle(0);$('angle-error').textContent='';});
+  $('compact-play').addEventListener('click',()=>state.playing?pause():play());$('compact-reset').addEventListener('click',()=>{pause();setAngle(0);$('angle-error').textContent='';});
+  document.querySelectorAll('[data-curve]').forEach(button=>button.addEventListener('click',()=>{const selected=button.dataset.curve;$('plots').dataset.selected=selected;document.querySelectorAll('[data-curve]').forEach(item=>item.setAttribute('aria-pressed',String(item.dataset.curve===selected)));dirty=true;}));
   $('speed').addEventListener('input',()=>{state.speed=Number($('speed').value);$('speed-output').value=state.speed+'°/s';});
   document.querySelectorAll('[data-toggle]').forEach(input=>input.addEventListener('change',()=>{state.visible[input.dataset.toggle]=input.checked;dirty=true;}));
   function converterHint(){const mode=$('converter-mode').value,hints={degrees:['es. 13,17','Usa una virgola o un punto: 13,17 oppure 13.17.'],dms:['es. 15 30 0','Scrivi gradi, minuti e secondi: 15 30 0 oppure 15° 30′ 0″.'],radians:['es. 7pi/2 oppure 13pi/9','2 = 2 radianti. 7pi/2, 7/2pi o (7/2)*pi = 7π/2. Puoi usare anche π.']};$('converter-input').placeholder=hints[mode][0];$('converter-input').inputMode=mode==='degrees'?'decimal':'text';$('converter-hint').textContent=hints[mode][1];state.converted=null;$('use-converted').disabled=true;$('conversion-results').hidden=true;$('converter-error').textContent='';}
