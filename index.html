@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#11161d">
+  <meta name="description" content="Esplora circonferenza goniometrica, seno, coseno, tangente e cotangente. Progetto scolastico di Maria Vittoria Mazzoli, 4ª B, Liceo Alessi.">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Trigonometria">
+  <title>Trigonometria interattiva · Maria Vittoria Mazzoli</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icons/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="./css/style.css">
+  <script src="./js/math.js" defer></script>
+  <script src="./js/app.js" defer></script>
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand"><img src="./icons/favicon.svg" width="44" height="44" alt=""><div><h1>Trigonometria <span>interattiva</span></h1><p>Maria Vittoria Mazzoli <span class="separator">·</span> Classe 4ª B <span class="separator">·</span> Liceo Alessi</p></div></div>
+    <button id="install" class="quiet" aria-haspopup="dialog">Installa l’app</button>
+  </header>
+  <main class="dashboard">
+    <section class="visual" aria-labelledby="circle-title">
+      <div class="panel circle-panel">
+        <div class="panel-heading"><div><p class="eyebrow">ESPLORA L’ANGOLO</p><h2 id="circle-title">Circonferenza goniometrica</h2></div><span class="radius-tag">r = 1</span></div>
+        <div class="angle-readout"><strong id="angle-display">0°</strong><span id="pi-display">0 rad</span></div>
+        <svg id="circle" viewBox="-180 -177 360 354" role="img" aria-labelledby="circle-svg-title circle-svg-description" tabindex="0">
+          <title id="circle-svg-title">Circonferenza goniometrica interattiva</title>
+          <desc id="circle-svg-description">Trascina P con mouse o dito. Puoi anche usare le frecce della tastiera per cambiare l’angolo.</desc>
+          <defs><marker id="arrow-tan" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto-start-reverse"><path d="M0,0 L7,3.5 L0,7 Z" fill="#ff9f43"/></marker><marker id="arrow-cot" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto-start-reverse"><path d="M0,0 L7,3.5 L0,7 Z" fill="#b084f5"/></marker></defs>
+          <g id="circle-static"></g><g id="circle-dynamic"></g>
+        </svg>
+        <div class="circle-footer"><span id="point-coordinates">P = (1 ; 0)</span><span>Trascina P · clicca sul cerchio</span></div>
+        <div class="pole-notices"><p id="circle-tan" class="notice tan"></p><p id="circle-cot" class="notice cot"></p></div>
+      </div>
+      <section class="panel instructions" aria-labelledby="help-title"><h2 id="help-title">Quattro cose da sapere</h2><ol><li><strong>Muovi P.</strong> Mouse o dito sul cerchio; il passaggio da 360° a 0° conserva i giri.</li><li><strong>Gradi decimali.</strong> Scrivi <code>15,5</code> oppure <code>15.5</code>.</li><li><strong>Gradi, minuti, secondi.</strong> Scrivi <code>15 30 0</code> oppure <code>15° 30′ 0″</code>.</li><li><strong>Radianti.</strong> <code>2</code> significa 2 rad; <code>7pi/2</code> o <code>7/2pi</code> significa 7π/2.</li></ol></section>
+    </section>
+    <section class="plots" aria-label="Grafici delle quattro funzioni">
+      <article class="panel plot sin" data-kind="sin"><div class="plot-heading"><h2>Seno</h2><span>y = sin α</span></div><p class="plot-status" id="status-sin">sin α = 0</p><canvas id="graph-sin" role="img" aria-label="Grafico del seno"></canvas><p class="graph-caption">Angolo totale · gradi / radianti</p></article>
+      <article class="panel plot cos" data-kind="cos"><div class="plot-heading"><h2>Coseno</h2><span>y = cos α</span></div><p class="plot-status" id="status-cos">cos α = 1</p><canvas id="graph-cos" role="img" aria-label="Grafico del coseno"></canvas><p class="graph-caption">Angolo totale · gradi / radianti</p></article>
+      <article class="panel plot tan" data-kind="tan"><div class="plot-heading"><h2>Tangente</h2><span>y = tan α</span></div><p class="plot-status" id="status-tan">tan α = 0</p><canvas id="graph-tan" role="img" aria-label="Grafico della tangente"></canvas><p class="graph-caption">Linee tratteggiate: asintoti</p></article>
+      <article class="panel plot cot" data-kind="cot"><div class="plot-heading"><h2>Cotangente</h2><span>y = cot α</span></div><p class="plot-status" id="status-cot">Non definita</p><canvas id="graph-cot" role="img" aria-label="Grafico della cotangente"></canvas><p class="graph-caption">Linee tratteggiate: asintoti</p></article>
+    </section>
+    <aside class="controls" aria-label="Controlli e convertitore">
+      <section class="panel movement"><h2>Angolo e movimento</h2><form id="angle-form"><label for="angle-input">Angolo totale in gradi</label><div class="input-action"><input id="angle-input" type="text" inputmode="decimal" value="0" autocomplete="off" aria-describedby="angle-error"><button type="submit">Applica</button></div><p class="error" id="angle-error" role="alert"></p></form>
+        <div class="range-heading"><label for="angle-slider">Angolo nel giro corrente</label><output id="slider-output" for="angle-slider">0°</output></div><input id="angle-slider" type="range" min="0" max="360" step="0.01" value="0">
+        <div class="button-row"><button id="minus-turn">−360°</button><button id="plus-turn">+360°</button></div>
+        <div class="button-row"><button id="play" class="primary" aria-pressed="false">▶ Play</button><button id="reset">Reset</button></div>
+        <div class="range-heading"><label for="speed">Velocità</label><output id="speed-output" for="speed">25°/s</output></div><input id="speed" type="range" min="1" max="120" step="1" value="25">
+        <p class="muted small">Da −36.000° a +36.000° · fino a 100 giri</p>
+      </section>
+      <section class="panel current-values"><h2>Valori correnti</h2><dl class="angle-facts"><div><dt>Equivalente</dt><dd id="equivalent">0°</dd></div><div><dt>Giri e resto</dt><dd id="turns">0 × 360° + 0°</dd></div><div><dt>Radianti totali</dt><dd id="radians">0 rad</dd></div><div><dt>Posizione</dt><dd id="quadrant">Asse +X</dd></div></dl><p class="muted small">Le caselle mostrano o nascondono segmenti e grafici.</p><div class="function-values" id="function-values">
+          <label class="function-row sin"><input type="checkbox" data-toggle="sin" checked><span>Seno</span><strong id="value-sin">0</strong></label>
+          <label class="function-row cos"><input type="checkbox" data-toggle="cos" checked><span>Coseno</span><strong id="value-cos">1</strong></label>
+          <label class="function-row tan"><input type="checkbox" data-toggle="tan" checked><span>Tangente</span><strong id="value-tan">0</strong></label>
+          <label class="function-row cot"><input type="checkbox" data-toggle="cot" checked><span>Cotangente</span><strong id="value-cot">Non definita</strong></label>
+        </div></section>
+      <section class="panel converter"><h2>Convertitore angoli</h2><form id="converter-form"><label for="converter-mode">Formato di ingresso</label><select id="converter-mode"><option value="degrees">Gradi decimali</option><option value="dms">Gradi, minuti, secondi</option><option value="radians">Radianti / forma con π</option></select><label for="converter-input">Angolo da convertire</label><input id="converter-input" type="text" value="" placeholder="es. 13,17" autocomplete="off" aria-describedby="converter-hint converter-error"><p id="converter-hint" class="muted small">Usa una virgola o un punto: 13,17 oppure 13.17.</p><button type="submit" class="full">Converti</button><p id="converter-error" class="error" role="alert"></p></form><dl id="conversion-results" class="conversion-results" hidden><div><dt>Gradi</dt><dd id="converted-degrees"></dd></div><div><dt>Sessagesimali</dt><dd id="converted-dms"></dd></div><div><dt>Radianti</dt><dd id="converted-radians"></dd></div><div><dt>Forma con π</dt><dd id="converted-pi"></dd></div></dl><button id="use-converted" class="full" disabled>Porta questo angolo sulla circonferenza</button></section>
+    </aside>
+  </main>
+  <footer class="app-footer"><span>Progetto scolastico · Maria Vittoria Mazzoli · 4ª B · Liceo Alessi</span><span id="offline-status" role="status">Preparazione offline…</span><button id="update-app" hidden>Aggiorna l’app</button></footer>
+  <dialog id="install-dialog"><div class="dialog-heading"><h2>Porta l’app sulla schermata Home</h2><button id="close-install" aria-label="Chiudi istruzioni">✕</button></div><p><strong>iPhone / iPad:</strong> apri il link in Safari, tocca Condividi e scegli “Aggiungi alla schermata Home”. Se disponibile, attiva “Apri come app web”.</p><p><strong>Android:</strong> apri il link in Chrome e scegli “Installa app” o “Aggiungi alla schermata Home” dal menu.</p><p><strong>PC:</strong> in Chrome o Edge usa il comando di installazione nella barra degli indirizzi o nel menu.</p><p class="muted">Per installare e usare l’app offline, aprila da un indirizzo HTTPS. Attendi “Disponibile offline” prima di chiuderla.</p></dialog>
+  <noscript>Per utilizzare la circonferenza interattiva abilita JavaScript nel browser.</noscript>
+</body>
+</html>
