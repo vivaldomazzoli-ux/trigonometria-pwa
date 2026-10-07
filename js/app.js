@@ -4,7 +4,7 @@
   const M=window.TrigMath,$=id=>document.getElementById(id);
   const colors={sin:'#35a7ff',cos:'#43d17d',tan:'#ff9f43',cot:'#b084f5'};
   const kinds=['sin','cos','tan','cot'];
-  const state={angle:0,speed:25,playing:false,visible:{sin:true,cos:true,tan:true,cot:true},scales:{tan:2,cot:2},converted:null};
+  const state={angle:0,speed:25,playing:false,visible:{sin:true,cos:true,tan:true,cot:true},scales:{tan:5,cot:5},converted:null};
   const svg=$('circle'),fixed=$('circle-static'),dynamic=$('circle-dynamic'),R=114;
   let dirty=true,lastFrame=0,drag=null,sliderBase=0;
   const NS='http://www.w3.org/2000/svg';
@@ -118,7 +118,7 @@
   $('play').addEventListener('click',()=>state.playing?pause():play());$('reset').addEventListener('click',()=>{pause();setAngle(0);$('angle-error').textContent='';});
   $('compact-play').addEventListener('click',()=>state.playing?pause():play());$('compact-reset').addEventListener('click',()=>{pause();setAngle(0);$('angle-error').textContent='';});
   document.querySelectorAll('[data-curve]').forEach(button=>button.addEventListener('click',()=>{const selected=button.dataset.curve;$('plots').dataset.selected=selected;document.querySelectorAll('[data-curve]').forEach(item=>item.setAttribute('aria-pressed',String(item.dataset.curve===selected)));dirty=true;}));
-  document.querySelectorAll('[data-scale-kind]').forEach(button=>button.addEventListener('click',()=>{const kind=button.dataset.scaleKind,scale=Number(button.dataset.scaleValue);if(!['tan','cot'].includes(kind)||![2,5].includes(scale))return;state.scales[kind]=scale;document.querySelectorAll('[data-scale-kind]').forEach(item=>item.setAttribute('aria-pressed',String(state.scales[item.dataset.scaleKind]===Number(item.dataset.scaleValue))));dirty=true;}));
+  document.querySelectorAll('[data-scale-kind]').forEach(button=>button.addEventListener('click',()=>{const kind=button.dataset.scaleKind,scale=Number(button.dataset.scaleValue);if(!['tan','cot'].includes(kind)||![2,5,30].includes(scale))return;state.scales[kind]=scale;document.querySelectorAll('[data-scale-kind]').forEach(item=>item.setAttribute('aria-pressed',String(state.scales[item.dataset.scaleKind]===Number(item.dataset.scaleValue))));dirty=true;}));
   $('speed').addEventListener('input',()=>{state.speed=Number($('speed').value);$('speed-output').value=state.speed+'°/s';});
   document.querySelectorAll('[data-toggle]').forEach(input=>input.addEventListener('change',()=>{state.visible[input.dataset.toggle]=input.checked;dirty=true;}));
   function converterHint(){const mode=$('converter-mode').value,hints={degrees:['es. 13,17','Usa una virgola o un punto: 13,17 oppure 13.17.'],dms:['es. 15 30 0','Scrivi gradi, minuti e secondi: 15 30 0 oppure 15° 30′ 0″.'],radians:['es. 7pi/2 oppure 13pi/9','2 = 2 radianti. 7pi/2, 7/2pi o (7/2)*pi = 7π/2. Puoi usare anche π.']};$('converter-input').placeholder=hints[mode][0];$('converter-input').inputMode=mode==='degrees'?'decimal':'text';$('converter-hint').textContent=hints[mode][1];state.converted=null;$('use-converted').disabled=true;$('conversion-results').hidden=true;$('converter-error').textContent='';}

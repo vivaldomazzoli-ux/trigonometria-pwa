@@ -1,6 +1,15 @@
 # Verifiche della PWA
 
-Versione consegnata: **1.0.8**. La cartella PWA è separata dai file Python desktop.
+Versione consegnata: **1.0.11**. La cartella PWA è separata dai file Python desktop.
+
+## Verifiche dell’aggiornamento 1.0.11
+
+- Scala iniziale ±5 verificata per tangente e cotangente; aggiunta ±30. Test automatici verificano tacche, segni dei limiti, valori finiti fuori scala anche oltre ±30, conservazione dell’angolo/giri e selezione dei pulsanti.
+- Altezza reale del Canvas: 320 pixel a 320×568 e 390×844, 331,5 pixel a 844×390; 176,6 pixel a 1366×768 come nel precedente layout PC. Nessuno scroll orizzontale alle quattro dimensioni.
+- A 844×390 seno e coseno conservano il Canvas di circa 216 pixel; il Canvas di tangente/cotangente supera 331 pixel. Il confronto con i circa 194 pixel precedenti riguarda la tangente con il proprio selettore di scala.
+- Scorrimento di 98 pixel nel browser orizzontale: il cerchio rimane nella schermata (bordo superiore del pannello a 8 pixel) e si vede la curva più alta. Continuando lo scroll, il pannello si arresta al confine della propria area e non copre i controlli.
+- Aggiornamento tramite service worker verificato; console della versione finale senza errori. Gli altri test matematici, convertitori, mouse/touch simulati, animazione e multi-giro sono superati.
+- Le misure sono del browser di anteprima, non di Safari su un iPhone fisico. La nuova cartella deve essere caricata su GitHub e poi provata sul telefono.
 
 ## Verifiche dell’aggiornamento 1.0.8
 

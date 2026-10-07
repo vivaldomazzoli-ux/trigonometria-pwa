@@ -55,6 +55,7 @@
  .compact-actions span{font-size:.72rem;color:var(--muted);line-height:1.3}
 }
 @media(max-width:600px){
+ .scale-picker span{display:none}
  .controls{grid-template-columns:1fr}.controls .converter{grid-column:auto}
  .plot-heading span{display:none}
  .circle-panel .panel-heading h2{font-size:.7rem}
@@ -77,5 +78,16 @@
  .circle-footer{display:none}
  .pole-notices{grid-template-columns:repeat(2,minmax(0,1fr))}.notice{font-size:.6rem}
  .compact-actions span{font-size:.65rem}
+}
+
+/* Tangente e cotangente: un disegno sensibilmente più alto, indipendente dalla scala. */
+@media(max-width:1000px){
+ .circle-region{grid-area:visual;min-width:0;align-self:stretch}
+ .circle-region .circle-panel{position:sticky;top:.5rem}
+ .plots[data-selected=tan],.plots[data-selected=cot]{height:auto}
+ .plots[data-selected=tan] #graph-tan,.plots[data-selected=cot] #graph-cot{height:clamp(320px,65vw,440px);min-height:320px;flex:0 0 auto}
+}
+@media(max-width:1000px) and (orientation:landscape) and (max-height:550px){
+ .plots[data-selected=tan] #graph-tan,.plots[data-selected=cot] #graph-cot{height:clamp(320px,85dvh,440px)}
 }
 
