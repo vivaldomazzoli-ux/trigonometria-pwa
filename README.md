@@ -6,7 +6,11 @@ Una versione web separata dell’applicazione desktop Python. Nessun file deskto
 
 ## Per iniziare
 
-### Aggiornamento 1.0.6 — PC e iPhone
+### Aggiornamento 1.0.8 — PC e iPhone
+
+Tangente e cotangente hanno pulsanti **±2** e **±5** per scegliere la scala verticale. La scala iniziale ±2 mette in evidenza la forma dei rami; ±5 permette di vedere valori più grandi. Ogni funzione conserva la propria scelta durante la sessione, anche cambiando curva o ruotando lo schermo. Cambiare scala non cambia l’angolo né i giri. Un punto fuori scala diventa un indicatore triangolare sul bordo, e il valore finito resta scritto sopra al grafico; nei punti non definiti si mostrano i limiti ±∞. Seno e coseno mantengono la scala con tacche −1, 0, 1.
+
+Sul telefono il grafico è più alto. In orizzontale viene usato più spazio dello schermo per la curva, riducendo i margini sopra il disegno; Play e Reset possono richiedere un breve scroll, soprattutto con la barra del browser visibile. Circonferenza e curva rimangono affiancate.
 
 Sul PC la circonferenza occupa meno larghezza e i quattro grafici hanno più spazio. Sul telefono circonferenza a sinistra e una curva a destra restano visibili insieme; scegli la funzione con i quattro pulsanti colorati. Play e Reset sono subito sotto. Ruota il telefono in orizzontale per ingrandire la vista; in verticale le etichette del cerchio sono necessariamente più piccole.
 
@@ -20,7 +24,7 @@ Per aggiornare il sito già pubblicato:
 4. Premi **Commit changes**. La pubblicazione GitHub Pages parte automaticamente; non occorre cambiare nuovamente Settings → Pages.
 5. Dopo la pubblicazione, riapri il sito online e premi **Aggiorna l’app** se compare, anche sull’iPhone. L’indirizzo del sito resta `https://vivaldomazzoli-ux.github.io/trigonometria-pwa/`.
 
-La versione del service worker è già incrementata a 1.0.6: non devi editarla per questo aggiornamento.
+La versione del service worker è già incrementata a 1.0.8: non devi editarla per questo aggiornamento.
 
 ### Prima apertura
 
@@ -88,7 +92,7 @@ I percorsi sono relativi: la PWA funziona anche nella sottocartella del reposito
 ## Aggiornare la versione online
 
 1. Modifica i file nella tua copia della PWA.
-2. Per modifiche successive a questo pacchetto cambia `VERSION` all’inizio di `service-worker.js`, per esempio da `1.0.6` a `1.0.7`.
+2. Per modifiche successive a questo pacchetto cambia `VERSION` all’inizio di `service-worker.js`, per esempio da `1.0.8` a `1.0.9`.
 3. Carica e salva su GitHub tutti i file modificati, incluso `service-worker.js`.
 4. Dopo la pubblicazione, riapri l’app online. Quando appare **“Aggiorna l’app”**, premilo: il nuovo service worker sostituisce la versione precedente e ricarica la pagina.
 

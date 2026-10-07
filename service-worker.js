@@ -1,6 +1,6 @@
 'use strict';
 // Cambiare VERSION a ogni pubblicazione; percorsi relativi per GitHub Pages.
-const VERSION='1.0.6';
+const VERSION='1.0.8';
 const PREFIX='trigonometria-'+self.registration.scope;
 const CACHE=PREFIX+VERSION;
 const ROOT=new URL('./',self.location.href).href;

@@ -4,7 +4,7 @@
   const M=window.TrigMath,$=id=>document.getElementById(id);
   const colors={sin:'#35a7ff',cos:'#43d17d',tan:'#ff9f43',cot:'#b084f5'};
   const kinds=['sin','cos','tan','cot'];
-  const state={angle:0,speed:25,playing:false,visible:{sin:true,cos:true,tan:true,cot:true},converted:null};
+  const state={angle:0,speed:25,playing:false,visible:{sin:true,cos:true,tan:true,cot:true},scales:{tan:2,cot:2},converted:null};
   const svg=$('circle'),fixed=$('circle-static'),dynamic=$('circle-dynamic'),R=114;
   let dirty=true,lastFrame=0,drag=null,sliderBase=0;
   const NS='http://www.w3.org/2000/svg';
@@ -70,17 +70,17 @@
     $('pi-display').title='Angolo completo: '+M.fmt(state.angle,4)+'° = '+M.fmt(state.angle*Math.PI/180,8)+' rad (valore decimale arrotondato)';
     $('equivalent').textContent=M.fmt(n,2)+'°';$('turns').textContent=`${Math.floor(state.angle/360)} × 360° + ${M.fmt(n,2)}°`;
     $('radians').textContent=M.fmt(state.angle*Math.PI/180,6)+' rad';$('quadrant').textContent=M.quadrant(state.angle);
-    for(const kind of kinds){const info=M.status(kind,state.angle);$('value-'+kind).textContent=v[kind]===null?'Non definita':M.fmt(v[kind],6);const status=$('status-'+kind);status.textContent=state.visible[kind]?(info.undefined?'NON DEFINITA · '+info.limits:info.text+(info.limits?' · '+info.limits:'')):'Funzione nascosta';}
+    for(const kind of kinds){const info=M.status(kind,state.angle);$('value-'+kind).textContent=v[kind]===null?'Non definita':M.fmt(v[kind],6);const status=$('status-'+kind);const outside=state.scales[kind]&&v[kind]!==null&&Math.abs(v[kind])>state.scales[kind];status.textContent=state.visible[kind]?(info.undefined?'NON DEFINITA · '+info.limits:info.text+(outside?' · Fuori scala (±'+state.scales[kind]+'): valore finito':'')+(info.limits?' · '+info.limits:'')):'Funzione nascosta';}
   }
   function drawGraph(kind){
     const canvas=$('graph-'+kind),rect=canvas.getBoundingClientRect(),w=Math.max(1,rect.width),h=Math.max(1,rect.height),dpr=Math.min(devicePixelRatio||1,3);
     if(canvas.width!==Math.round(w*dpr)||canvas.height!==Math.round(h*dpr)){canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);}
     const ctx=canvas.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);
-    const left=29,right=w-12,top=12,bottom=h-39,pw=right-left,ph=bottom-top,color=colors[kind],limit=kind==='sin'||kind==='cos'?1.2:5.5;
+    const left=29,right=w-12,top=12,bottom=h-39,pw=right-left,ph=bottom-top,color=colors[kind],scale=state.scales[kind]||1,limit=state.scales[kind]?scale*1.1:1.2;
     if(pw<=0||ph<=0)return;const [xmin,xmax]=M.graphRange(state.angle),span=xmax-xmin;
     const xx=a=>left+(a-xmin)/span*pw,yy=v=>top+(limit-v)/(2*limit)*ph;
     ctx.font='12px system-ui';ctx.textAlign='right';ctx.textBaseline='middle';
-    for(const y of (limit<2?[-1,0,1]:[-5,0,5])){ctx.strokeStyle='#43505f';ctx.globalAlpha=y===0?.7:.3;ctx.lineWidth=.6;ctx.beginPath();ctx.moveTo(left,yy(y));ctx.lineTo(right,yy(y));ctx.stroke();ctx.globalAlpha=1;ctx.fillStyle='#a6b3c1';ctx.fillText(String(y),left-6,yy(y));}
+    for(const y of [-scale,0,scale]){ctx.strokeStyle='#43505f';ctx.globalAlpha=y===0?.7:.3;ctx.lineWidth=.6;ctx.beginPath();ctx.moveTo(left,yy(y));ctx.lineTo(right,yy(y));ctx.stroke();ctx.globalAlpha=1;ctx.fillStyle='#a6b3c1';ctx.fillText(String(y),left-6,yy(y));}
     const step=span<=360?90:span<=720?180:360*Math.ceil(span/1440);
     const ticks=[];for(let a=Math.ceil(xmin/step)*step;a<=xmax+.001;a+=step)ticks.push(a);
     // Sui grafici stretti mostra tre etichette, mantenendo la griglia a 90°.
@@ -91,7 +91,7 @@
     const offset=kind==='tan'?90:0,isPole=kind==='tan'||kind==='cot';
     if(isPole){ctx.strokeStyle=color;ctx.globalAlpha=.5;ctx.lineWidth=.8;ctx.setLineDash([4,4]);for(let pole=Math.ceil((xmin-offset)/180)*180+offset;pole<=xmax;pole+=180){ctx.beginPath();ctx.moveTo(xx(pole),top);ctx.lineTo(xx(pole),bottom);ctx.stroke();}ctx.setLineDash([]);ctx.globalAlpha=1;
       // Segni dei limiti a entrambi i lati, senza attribuire infinito al polo.
-      const poleCount=Math.floor(span/180)+1;if(poleCount<=7){for(let pole=Math.ceil((xmin-offset)/180)*180+offset;pole<=xmax;pole+=180){for(const side of [-1,1]){const a=pole+side*span*.022;if(a<=xmin||a>=xmax)continue;const sign=kind==='tan'?-side:side,x=xx(a);ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x,yy(sign*3.8));ctx.lineTo(x,yy(sign*5.2));ctx.stroke();const end=yy(sign*5.2);ctx.beginPath();ctx.moveTo(x-3,end+sign*4);ctx.lineTo(x,end);ctx.lineTo(x+3,end+sign*4);ctx.stroke();ctx.textAlign='center';ctx.font='11px system-ui';ctx.fillText(sign>0?'+∞':'−∞',x,yy(sign*3.25));}}}
+      const poleCount=Math.floor(span/180)+1;if(poleCount<=7){for(let pole=Math.ceil((xmin-offset)/180)*180+offset;pole<=xmax;pole+=180){for(const side of [-1,1]){const a=pole+side*span*.022;if(a<=xmin||a>=xmax)continue;const sign=kind==='tan'?-side:side,x=xx(a);ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x,yy(sign*scale*.76));ctx.lineTo(x,yy(sign*scale*1.04));ctx.stroke();const end=yy(sign*scale*1.04);ctx.beginPath();ctx.moveTo(x-3,end+sign*4);ctx.lineTo(x,end);ctx.lineTo(x+3,end+sign*4);ctx.stroke();ctx.textAlign='center';ctx.font='11px system-ui';ctx.fillText(sign>0?'+∞':'−∞',x,yy(sign*scale*.65));}}}
     }
     ctx.strokeStyle=color;ctx.lineWidth=1.65;ctx.beginPath();
     const start=Math.min(0,state.angle),end=Math.max(0,state.angle),extent=end-start,samples=Math.min(24000,Math.max(Math.ceil(pw*3),Math.ceil(extent*3))),actual=Math.max(1,samples);
@@ -101,8 +101,8 @@
       const x=xx(a),y=yy(value);if(drawing)ctx.lineTo(x,y);else ctx.moveTo(x,y);drawing=true;previousBranch=branch;
     }ctx.stroke();
     const value=M.values(state.angle)[kind],currentX=xx(state.angle);ctx.strokeStyle='#e9eef5';ctx.globalAlpha=.6;ctx.lineWidth=.7;ctx.beginPath();ctx.moveTo(currentX,top);ctx.lineTo(currentX,bottom);ctx.stroke();ctx.globalAlpha=1;
-    if(value!==null){ctx.fillStyle=color;ctx.strokeStyle='#fff';ctx.lineWidth=.7;const y=yy(Math.max(-5.1,Math.min(5.1,value)));ctx.beginPath();if(isPole&&Math.abs(value)>5.1){const sign=Math.sign(value);ctx.moveTo(currentX,y);ctx.lineTo(currentX-4,y+sign*7);ctx.lineTo(currentX+4,y+sign*7);ctx.closePath();}else ctx.arc(currentX,yy(value),3.6,0,Math.PI*2);ctx.fill();ctx.stroke();}
-    ctx.restore();canvas.setAttribute('aria-label',`Grafico ${kind}, da ${xmin} a ${xmax} gradi. ${M.status(kind,state.angle).text}.`);
+    if(value!==null){ctx.fillStyle=color;ctx.strokeStyle='#fff';ctx.lineWidth=.7;const y=yy(Math.max(-scale*1.02,Math.min(scale*1.02,value)));ctx.beginPath();if(isPole&&Math.abs(value)>scale){const sign=Math.sign(value);ctx.moveTo(currentX,y);ctx.lineTo(currentX-4,y+sign*7);ctx.lineTo(currentX+4,y+sign*7);ctx.closePath();}else ctx.arc(currentX,yy(value),3.6,0,Math.PI*2);ctx.fill();ctx.stroke();}
+    ctx.restore();canvas.setAttribute('aria-label',`Grafico ${kind}, da ${xmin} a ${xmax} gradi. ${M.status(kind,state.angle).text}. Scala verticale da −${scale} a +${scale}${value!==null&&Math.abs(value)>scale?", valore finito fuori scala":""}.`);
   }
   function render(){renderValues();drawCircle();kinds.forEach(drawGraph);dirty=false;}
   function frame(timestamp){if(state.playing){const elapsed=Math.min((timestamp-lastFrame)/1000,.25);lastFrame=timestamp;setAngle(state.angle+state.speed*Math.max(0,elapsed));if(state.angle===M.MAX_ANGLE)pause();}if(dirty)render();requestAnimationFrame(frame);}
@@ -118,6 +118,7 @@
   $('play').addEventListener('click',()=>state.playing?pause():play());$('reset').addEventListener('click',()=>{pause();setAngle(0);$('angle-error').textContent='';});
   $('compact-play').addEventListener('click',()=>state.playing?pause():play());$('compact-reset').addEventListener('click',()=>{pause();setAngle(0);$('angle-error').textContent='';});
   document.querySelectorAll('[data-curve]').forEach(button=>button.addEventListener('click',()=>{const selected=button.dataset.curve;$('plots').dataset.selected=selected;document.querySelectorAll('[data-curve]').forEach(item=>item.setAttribute('aria-pressed',String(item.dataset.curve===selected)));dirty=true;}));
+  document.querySelectorAll('[data-scale-kind]').forEach(button=>button.addEventListener('click',()=>{const kind=button.dataset.scaleKind,scale=Number(button.dataset.scaleValue);if(!['tan','cot'].includes(kind)||![2,5].includes(scale))return;state.scales[kind]=scale;document.querySelectorAll('[data-scale-kind]').forEach(item=>item.setAttribute('aria-pressed',String(state.scales[item.dataset.scaleKind]===Number(item.dataset.scaleValue))));dirty=true;}));
   $('speed').addEventListener('input',()=>{state.speed=Number($('speed').value);$('speed-output').value=state.speed+'°/s';});
   document.querySelectorAll('[data-toggle]').forEach(input=>input.addEventListener('change',()=>{state.visible[input.dataset.toggle]=input.checked;dirty=true;}));
   function converterHint(){const mode=$('converter-mode').value,hints={degrees:['es. 13,17','Usa una virgola o un punto: 13,17 oppure 13.17.'],dms:['es. 15 30 0','Scrivi gradi, minuti e secondi: 15 30 0 oppure 15° 30′ 0″.'],radians:['es. 7pi/2 oppure 13pi/9','2 = 2 radianti. 7pi/2, 7/2pi o (7/2)*pi = 7π/2. Puoi usare anche π.']};$('converter-input').placeholder=hints[mode][0];$('converter-input').inputMode=mode==='degrees'?'decimal':'text';$('converter-hint').textContent=hints[mode][1];state.converted=null;$('use-converted').disabled=true;$('conversion-results').hidden=true;$('converter-error').textContent='';}

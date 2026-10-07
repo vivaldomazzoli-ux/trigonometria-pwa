@@ -1,6 +1,16 @@
 # Verifiche della PWA
 
-Versione consegnata: **1.0.6**. La cartella PWA è separata dai file Python desktop.
+Versione consegnata: **1.0.8**. La cartella PWA è separata dai file Python desktop.
+
+## Verifiche dell’aggiornamento 1.0.8
+
+- Pulsanti ±2/±5 per tangente e cotangente provati con i veri gestori dell’app: selezione coerente, scala indipendente per funzione, angolo e multi-giro conservati. Scala iniziale ±2.
+- Test del disegno Canvas: tacche ±2/±5 corrette; un valore finito fuori scala usa il triangolo al posto del punto; nella scala più ampia torna il punto. Seno/coseno conservano tacche ±1. Valori non definiti non sono confusi con valori finiti fuori scala; segni dei limiti verificati per entrambi i poli.
+- Caso del telefono riprodotto nel browser con 471,03°: tangente circa −2,601018 (la differenza rispetto allo screenshot dipende dai decimali non mostrati). In ±2 appare fuori scala e in ±5 il punto è visibile. Due anteprime salvate.
+- Layout verificato a 844×320, 844×390, 390×844, 320×568 e 1366×768; nessuno scroll orizzontale. Nel browser a 844×390 il Canvas passa da circa 148 a 194 pixel d’altezza; l’area della curva, esclusi gli assi e le etichette, passa da circa 97 a 143 pixel. Il grafico rientra nella schermata; i comandi inferiori possono richiedere scroll.
+- Scala conservata cambiando dimensione dello schermo; test automatici di convertitore, mouse/touch simulati, multi-giro, animazione, selezione della curva e cache superati.
+- Aggiornamento 1.0.6 → 1.0.8 provato tramite il pulsante della PWA. Server poi arrestato, pagina ricaricata dalla cache e scala ±5/cambio angolo da tastiera verificati offline. Nessun errore JavaScript della versione finale osservato.
+- Questa versione locale deve essere caricata su GitHub; le prove Safari e touch fisico restano da effettuare dall’utente sul telefono.
 
 ## Verifiche dell’aggiornamento 1.0.6
 
